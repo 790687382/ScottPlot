@@ -11,9 +11,11 @@
     <PackageTags>plot graph data chart signal line bar C# WPF control interactive</PackageTags>
     <PackageReleaseNotes>https://github.com/swharden/ScottPlot/releases</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>4.0.2</Version>
-    <AssemblyVersion>4.0.2.0</AssemblyVersion>
-    <FileVersion>4.0.2.0</FileVersion>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Version>4.0.19</Version>
+    <AssemblyVersion>4.0.19</AssemblyVersion>
+    <FileVersion>4.0.19</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

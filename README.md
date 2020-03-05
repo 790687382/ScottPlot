@@ -1,20 +1,22 @@
 # ScottPlot
 
 [![](https://img.shields.io/azure-devops/build/swharden/swharden/2?label=Build&logo=azure%20pipelines)](https://dev.azure.com/swharden/swharden/_build/latest?definitionId=2&branchName=master)
-[![](https://img.shields.io/azure-devops/tests/swharden/swharden/2?label=Tests&logo=azure%20pipelines)](https://dev.azure.com/swharden/swharden/_build/latest?definitionId=2&branchName=master)
 [![](https://img.shields.io/nuget/dt/ScottPlot?color=004880&label=NuGet%20Installs&logo=nuget)](https://www.nuget.org/packages/ScottPlot/)
 
 **ScottPlot is a free and open-source graphing library for .NET** which makes it easy to display data in a variety of formats (line plots, bar charts, scatter plots, etc.) with just a few lines of code (see the **[ScottPlot Cookbook](/cookbook)** for examples). User controls are available for WinForms and WPF to allow interactive display of data.
 
 ![](dev/nuget/ScottPlot.gif)
 
-NuGet Package | Target Framework(s) | Purpose
+# Supported Platforms
+ScottPlot is written in .NET Standard 2.0 so it [supports all modern .NET platforms](https://docs.microsoft.com/en-us/dotnet/standard/net-standard#net-implementation-support). The WPF control (WpfPlot) supports .NET Core and the Windows Forms control (FormsPlot) supports both .NET Framework and .NET Core.
+
+Package | Supported Platforms | Purpose
 ---|---|---
-[ScottPlot](https://www.nuget.org/packages/ScottPlot/) | .NET Standard 2.0 | Plot data and save or return a bitmap
-[ScottPlot.WinForms](https://www.nuget.org/packages/ScottPlot.WinForms/) | .NET Framework 4.6.1 <br> .NET Core 3.0 | User control for mouse-interactive plots
+[ScottPlot](https://www.nuget.org/packages/ScottPlot/) | .NET Standard 2.0 | Plot data and save or return a bitmap <br> _Supports Windows, Linux, and MacOS_
+[ScottPlot.WinForms](https://www.nuget.org/packages/ScottPlot.WinForms/) | .NET Framework 4.6.1 <br> .NET Framework 4.7.2 <br> .NET Framework 4.8.0 <br>  .NET Core 3.0 | User control for mouse-interactive plots
 [ScottPlot.WPF](https://www.nuget.org/packages/ScottPlot.WPF/) | .NET Core 3.0 | User control for mouse-interactive plots
 
-_[ScottPlot 3.1.6](https://www.nuget.org/packages/ScottPlot/3.1.6) is the last version which supports .NET Framework 4.5_
+_ScottPlot 3.1.6 is the last version to support .NET Framework 4.5_
 
 ## Quickstart
 
@@ -46,14 +48,16 @@ pictureBox1.Image = plt.GetBitmap();
 ```cs
 double[] dataX = new double[] {1, 2, 3, 4, 5};
 double[] dataY = new double[] {1, 4, 9, 16, 25};
-wpfPlot1.plt.PlotScatter(dataX, dataY);
+formsPlot1.plt.PlotScatter(dataX, dataY);
 formsPlot1.Render();
 ```
 
 ### Interactive Plot (WPF)
 * Install the `ScottPlot.WPF` NuGet package
-* Add `<ScottPlot:WpfPlot Name="wpfPlot1"/>` to your XAML file
-* Add the following to the start-up sequence:
+* Add the WpfPlot control by modifying your XAML file:
+  * Add `xmlns:ScottPlot="clr-namespace:ScottPlot;assembly=ScottPlot.WPF"` to the top section
+  * Add `<ScottPlot:WpfPlot Name="wpfPlot1" />` to the layout area
+* Add code to the startup sequence of your CS file:
 ```cs
 double[] dataX = new double[] {1, 2, 3, 4, 5};
 double[] dataY = new double[] {1, 4, 9, 16, 25};
@@ -78,4 +82,8 @@ Review the **[ScottPlot Cookbook](/cookbook)** to see what ScottPlot can do and 
 
 ## About ScottPlot
 
-ScottPlot was created by [Scott Harden](http://www.SWHarden.com/) ([Harden Technologies, LLC](http://tech.swharden.com)) with many contributions from the user community. To inquire about the development special features or customized versions of this software for consumer applications, contact the author at [SWHarden@gmail.com](mailto:swharden@gmail.com).
+**Author:** ScottPlot was created by [Scott Harden](http://www.SWHarden.com/) ([Harden Technologies, LLC](http://tech.swharden.com)) with many contributions from the user community. 
+
+**Commission:** To inquire about the development special features or customized versions of this software for consumer applications, contact the author at [SWHarden@gmail.com](mailto:swharden@gmail.com).
+
+**Version history:** the [ScottPlot changelog](/dev/changelog.md) has an excellent summary of the differences between major versions of ScottPlot.

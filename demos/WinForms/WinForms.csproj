@@ -127,6 +127,12 @@
     <Compile Include="Demos\FormHoverValue.Designer.cs">
       <DependentUpon>FormHoverValue.cs</DependentUpon>
     </Compile>
+    <Compile Include="Demos\FormIncomingData.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Demos\FormIncomingData.Designer.cs">
+      <DependentUpon>FormIncomingData.cs</DependentUpon>
+    </Compile>
     <Compile Include="Demos\FormLegend.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -163,17 +169,23 @@
     <Compile Include="Demos\FormSignalConst.Designer.cs">
       <DependentUpon>FormSignalConst.cs</DependentUpon>
     </Compile>
+    <Compile Include="Demos\FormSignalDistribution.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Demos\FormSignalDistribution.Designer.cs">
+      <DependentUpon>FormSignalDistribution.cs</DependentUpon>
+    </Compile>
     <Compile Include="Demos\FormTickTester.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Demos\FormTickTester.Designer.cs">
       <DependentUpon>FormTickTester.cs</DependentUpon>
     </Compile>
-    <Compile Include="Demos\FormTimeAxis.cs">
+    <Compile Include="Demos\FormDateTimeAxis.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Demos\FormTimeAxis.Designer.cs">
-      <DependentUpon>FormTimeAxis.cs</DependentUpon>
+    <Compile Include="Demos\FormDateTimeAxis.Designer.cs">
+      <DependentUpon>FormDateTimeAxis.cs</DependentUpon>
     </Compile>
     <Compile Include="Demos\FormToggleVis.cs">
       <SubType>Form</SubType>
@@ -217,6 +229,18 @@
     <Compile Include="Demos\FormSignal.Designer.cs">
       <DependentUpon>FormSignal.cs</DependentUpon>
     </Compile>
+    <Compile Include="Demos\FormRegression.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Demos\FormRegression.Designer.cs">
+      <DependentUpon>FormRegression.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PlotViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PlotViewer.Designer.cs">
+      <DependentUpon>PlotViewer.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Demos\FormBenchmark.resx">
@@ -258,6 +282,9 @@
     <EmbeddedResource Include="Demos\FormHoverValue.resx">
       <DependentUpon>FormHoverValue.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Demos\FormIncomingData.resx">
+      <DependentUpon>FormIncomingData.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Demos\FormLegend.resx">
       <DependentUpon>FormLegend.cs</DependentUpon>
     </EmbeddedResource>
@@ -276,17 +303,23 @@
     <EmbeddedResource Include="Demos\FormGrowingRollingBuffer.resx">
       <DependentUpon>FormGrowingRollingBuffer.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Demos\FormRegression.resx">
+      <DependentUpon>FormRegression.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Demos\FormSignal.resx">
       <DependentUpon>FormSignal.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Demos\FormSignalConst.resx">
       <DependentUpon>FormSignalConst.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Demos\FormSignalDistribution.resx">
+      <DependentUpon>FormSignalDistribution.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Demos\FormTickTester.resx">
       <DependentUpon>FormTickTester.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Demos\FormTimeAxis.resx">
-      <DependentUpon>FormTimeAxis.cs</DependentUpon>
+    <EmbeddedResource Include="Demos\FormDateTimeAxis.resx">
+      <DependentUpon>FormDateTimeAxis.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Demos\FormToggleVis.resx">
       <DependentUpon>FormToggleVis.cs</DependentUpon>
@@ -302,6 +335,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PlotViewer.resx">
+      <DependentUpon>PlotViewer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

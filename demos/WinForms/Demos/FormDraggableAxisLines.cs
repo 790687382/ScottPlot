@@ -27,9 +27,17 @@ namespace ScottPlotDemos
             formsPlot1.plt.Grid(false);
             formsPlot1.plt.PlotScatter(Xs, Ys);
             formsPlot1.plt.AxisAuto();
+
+            // plot markers specific X positions
+            formsPlot1.plt.PlotVLine(x: 15, draggable: true, dragLimitLower: 0, dragLimitUpper: 49);
+            formsPlot1.plt.PlotHSpan(x1: 20, x2: 25, draggable: true, dragLimitLower: 0, dragLimitUpper: 49);
+
+            // plot markers at specific Y positions
+            formsPlot1.plt.PlotHLine(y: -.75, draggable: true, dragLimitLower: -1, dragLimitUpper: 1);
+            formsPlot1.plt.PlotVSpan(y1: .25, y2: .5, draggable: true, dragLimitLower: -1, dragLimitUpper: 1);
+
             formsPlot1.Render();
             UpdateMessage();
-            BtnAddVline_Click(null, null);
         }
 
         private void BtnAddHline_Click(object sender, EventArgs e)
@@ -50,7 +58,7 @@ namespace ScottPlotDemos
 
         private void BtnClearLines_Click(object sender, EventArgs e)
         {
-            formsPlot1.plt.Clear(scatterPlots: false);
+            formsPlot1.plt.Clear(scatterPlots: false, axisSpans: false);
             formsPlot1.Render();
             UpdateMessage();
         }
@@ -62,10 +70,22 @@ namespace ScottPlotDemos
             var plottables = formsPlot1.plt.GetPlottables();
             for (int i = 0; i < plottables.Count; i++)
             {
-                if (plottables[i] is ScottPlot.PlottableAxLine axLine)
+
+                if (plottables[i] is ScottPlot.PlottableVLine vLine)
                 {
-                    string lineType = (axLine.vertical) ? "VLine" : "HLine";
-                    msg += $"{i}: {lineType} at {Math.Round(axLine.position, 4)}\r\n";
+                    msg += $"{i}: VLine ({vLine.position:F4})\r\n";
+                }
+                else if (plottables[i] is ScottPlot.PlottableHLine hLine)
+                {
+                    msg += $"{i}: HLine ({hLine.position:F4})\r\n";
+                }
+                else if (plottables[i] is ScottPlot.PlottableVSpan vSpan)
+                {
+                    msg += $"{i}: VSpan ({vSpan.position1:F4} to {vSpan.position2:F4})\r\n";
+                }
+                else if (plottables[i] is ScottPlot.PlottableHSpan hSpan)
+                {
+                    msg += $"{i}: HSpan ({hSpan.position1:F4} to {hSpan.position2:F4})\r\n";
                 }
             }
             richTextBox1.Text = msg;
@@ -89,6 +109,31 @@ namespace ScottPlotDemos
             Console.WriteLine("Dropped a plottable object");
             UpdateMessage();
             richTextBox1.Enabled = true;
+        }
+
+        private void BtnAddHspan_Click(object sender, EventArgs e)
+        {
+            (double y1, double y2) = ScottPlot.DataGen.RandomSpan(rand: null, low: -1, high: 1, minimumSpacing: .25);
+
+            formsPlot1.plt.PlotHSpan(y1, y2, draggable: true, dragLimitLower: -1, dragLimitUpper: 1);
+            formsPlot1.Render();
+            UpdateMessage();
+        }
+
+        private void BtnAddVSpan_Click(object sender, EventArgs e)
+        {
+            (double x1, double x2) = ScottPlot.DataGen.RandomSpan(rand: null, low: 0, high: 50, minimumSpacing: 10);
+
+            formsPlot1.plt.PlotVSpan(x1, x2, draggable: true, dragLimitLower: 0, dragLimitUpper: 50);
+            formsPlot1.Render();
+            UpdateMessage();
+        }
+
+        private void BtnClearSpans_Click(object sender, EventArgs e)
+        {
+            formsPlot1.plt.Clear(axisLines: false, scatterPlots: false);
+            formsPlot1.Render();
+            UpdateMessage();
         }
     }
 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace ScottPlot
 {
@@ -24,10 +25,13 @@ namespace ScottPlot
             return new SolidBrush(GetRandomColor());
         }
 
-        public static string GetVersionString()
+        public static string GetVersionString(bool justThreeDigits = true)
         {
-            Version scottPlotVersion = typeof(ScottPlot.Plot).Assembly.GetName().Version;
-            return scottPlotVersion.ToString();
+            Version ver = typeof(Plot).Assembly.GetName().Version;
+            if (justThreeDigits)
+                return $"{ver.Major}.{ver.Minor}.{ver.Build}";
+            else
+                return ver.ToString();
         }
 
         public static string GetFrameworkVersionString()
@@ -68,14 +72,10 @@ namespace ScottPlot
             return bytes;
         }
 
+        [Obsolete("use ScottPlot.Config.Fonts.GetValidFontName()", error: true)]
         public static string VerifyFont(string fontName)
         {
-            foreach (FontFamily font in System.Drawing.FontFamily.Families)
-            {
-                if (fontName.ToUpper() == font.Name.ToUpper())
-                    return font.Name;
-            }
-            throw new Exception($"Font not found: {fontName}");
+            return null;
         }
 
         public static string ScientificNotation(double value, int decimalPlaces = 2, bool preceedWithPlus = true)
@@ -117,6 +117,15 @@ namespace ScottPlot
             plt.YLabel("Sample Data");
         }
 
+        public static double[] DateTimesToDoubles(DateTime[] dateTimeArray)
+        {
+            double[] positions = new double[dateTimeArray.Length];
+            for (int i = 0; i < positions.Length; i++)
+                positions[i] = dateTimeArray[i].ToOADate();
+            return positions;
+        }
+
+        [Obsolete]
         public static Bitmap DesignerModeBitmap(Size size, bool drawArrows = false)
         {
             Bitmap bmp = new Bitmap(size.Width, size.Height);
@@ -132,7 +141,7 @@ namespace ScottPlot
             float padding = 3;
 
             // logo
-            FontFamily ff = new FontFamily(Tools.VerifyFont("Segoe UI"));
+            FontFamily ff = new FontFamily(Config.Fonts.GetDefaultFontName());
             gfx.DrawString("ScottPlot", new Font(ff, 24, FontStyle.Bold), brushLogo, 10, 10);
             var titleSize = gfx.MeasureString("ScottPlot", new Font(ff, 24, FontStyle.Bold));
             gfx.DrawString($"version {GetVersionString()}", new Font(ff, 12, FontStyle.Italic), brushLogo, 12, (int)(10 + titleSize.Height * .7));
@@ -207,6 +216,35 @@ namespace ScottPlot
             double baselineAverage = baselineSum / (index2 - index1);
             for (int i = 0; i < data.Length; i++)
                 data[i] -= baselineAverage;
+        }
+
+        public static double[] Log10(double[] dataIn)
+        {
+            double[] dataOut = new double[dataIn.Length];
+            for (int i = 0; i < dataOut.Length; i++)
+                dataOut[i] = Math.Log10(dataIn[i]);
+            return dataOut;
+        }
+
+        public static void LaunchBrowser(string url)
+        {
+            // A cross-platform .NET-Core-safe function to launch a URL in the browser
+            Debug.WriteLine($"Launching URL: {url}");
+            try
+            {
+                Process.Start(url);
+            }
+            catch
+            {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                    Process.Start("xdg-open", url);
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                    Process.Start("open", url);
+                else
+                    throw;
+            }
         }
     }
 }

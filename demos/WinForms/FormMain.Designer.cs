@@ -39,17 +39,20 @@
             this.label1 = new System.Windows.Forms.Label();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.btnRegression = new System.Windows.Forms.Button();
             this.btnWavFileViewer = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.btnOverride = new System.Windows.Forms.Button();
             this.btnUserControlSettings = new System.Windows.Forms.Button();
             this.btnHover = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.btnToggleVisibility = new System.Windows.Forms.Button();
             this.btnLinkedPlots = new System.Windows.Forms.Button();
             this.btnPadding = new System.Windows.Forms.Button();
             this.btnCustomGrid = new System.Windows.Forms.Button();
             this.btnLegend = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.SignalDistribution = new System.Windows.Forms.Button();
             this.btnBarGraph = new System.Windows.Forms.Button();
             this.btnDraggableAxisLines = new System.Windows.Forms.Button();
             this.btnScatterErrorbars = new System.Windows.Forms.Button();
@@ -57,6 +60,7 @@
             this.btnFinancial = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.btnIncoming = new System.Windows.Forms.Button();
             this.btnGrowingRoll = new System.Windows.Forms.Button();
             this.btnGrowingCircular = new System.Windows.Forms.Button();
             this.btnGrowingArray = new System.Windows.Forms.Button();
@@ -76,7 +80,6 @@
             this.lblGitHubUrl = new System.Windows.Forms.Label();
             this.lblVersion = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.btnToggleVisibility = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage3.SuspendLayout();
@@ -104,7 +107,7 @@
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(513, 272);
+            this.tabControl1.Size = new System.Drawing.Size(513, 343);
             this.tabControl1.TabIndex = 0;
             // 
             // tabPage1
@@ -119,7 +122,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(505, 246);
+            this.tabPage1.Size = new System.Drawing.Size(505, 317);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Common Plots";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -199,20 +202,31 @@
             this.tabPage3.Controls.Add(this.label6);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(505, 246);
+            this.tabPage3.Size = new System.Drawing.Size(505, 317);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Advanced";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // groupBox6
             // 
+            this.groupBox6.Controls.Add(this.btnRegression);
             this.groupBox6.Controls.Add(this.btnWavFileViewer);
             this.groupBox6.Location = new System.Drawing.Point(288, 139);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(120, 50);
+            this.groupBox6.Size = new System.Drawing.Size(120, 82);
             this.groupBox6.TabIndex = 18;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Misc";
+            // 
+            // btnRegression
+            // 
+            this.btnRegression.Location = new System.Drawing.Point(6, 47);
+            this.btnRegression.Name = "btnRegression";
+            this.btnRegression.Size = new System.Drawing.Size(106, 23);
+            this.btnRegression.TabIndex = 19;
+            this.btnRegression.Text = "Linear Regression";
+            this.btnRegression.UseVisualStyleBackColor = true;
+            this.btnRegression.Click += new System.EventHandler(this.btnRegression_Click);
             // 
             // btnWavFileViewer
             // 
@@ -280,6 +294,16 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Styling";
             // 
+            // btnToggleVisibility
+            // 
+            this.btnToggleVisibility.Location = new System.Drawing.Point(6, 135);
+            this.btnToggleVisibility.Name = "btnToggleVisibility";
+            this.btnToggleVisibility.Size = new System.Drawing.Size(106, 23);
+            this.btnToggleVisibility.TabIndex = 19;
+            this.btnToggleVisibility.Text = "Toggle Visibility";
+            this.btnToggleVisibility.UseVisualStyleBackColor = true;
+            this.btnToggleVisibility.Click += new System.EventHandler(this.btnToggleVisibility_Click);
+            // 
             // btnLinkedPlots
             // 
             this.btnLinkedPlots.Location = new System.Drawing.Point(6, 106);
@@ -322,6 +346,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.SignalDistribution);
             this.groupBox1.Controls.Add(this.btnBarGraph);
             this.groupBox1.Controls.Add(this.btnDraggableAxisLines);
             this.groupBox1.Controls.Add(this.btnScatterErrorbars);
@@ -329,10 +354,20 @@
             this.groupBox1.Controls.Add(this.btnFinancial);
             this.groupBox1.Location = new System.Drawing.Point(6, 25);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(150, 166);
+            this.groupBox1.Size = new System.Drawing.Size(150, 196);
             this.groupBox1.TabIndex = 14;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "More Plot Types";
+            // 
+            // SignalDistribution
+            // 
+            this.SignalDistribution.Location = new System.Drawing.Point(6, 164);
+            this.SignalDistribution.Name = "SignalDistribution";
+            this.SignalDistribution.Size = new System.Drawing.Size(137, 23);
+            this.SignalDistribution.TabIndex = 14;
+            this.SignalDistribution.Text = "Signal Color by Density";
+            this.SignalDistribution.UseVisualStyleBackColor = true;
+            this.SignalDistribution.Click += new System.EventHandler(this.SignalDistribution_Click_1);
             // 
             // btnBarGraph
             // 
@@ -395,6 +430,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.btnIncoming);
             this.tabPage2.Controls.Add(this.btnGrowingRoll);
             this.tabPage2.Controls.Add(this.btnGrowingCircular);
             this.tabPage2.Controls.Add(this.btnGrowingArray);
@@ -402,10 +438,20 @@
             this.tabPage2.Controls.Add(this.label10);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(505, 246);
+            this.tabPage2.Size = new System.Drawing.Size(505, 317);
             this.tabPage2.TabIndex = 5;
             this.tabPage2.Text = "Live Data";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // btnIncoming
+            // 
+            this.btnIncoming.Location = new System.Drawing.Point(6, 141);
+            this.btnIncoming.Name = "btnIncoming";
+            this.btnIncoming.Size = new System.Drawing.Size(137, 23);
+            this.btnIncoming.TabIndex = 13;
+            this.btnIncoming.Text = "Incoming Data";
+            this.btnIncoming.UseVisualStyleBackColor = true;
+            this.btnIncoming.Click += new System.EventHandler(this.btnIncoming_Click);
             // 
             // btnGrowingRoll
             // 
@@ -463,7 +509,7 @@
             this.tabPage4.Controls.Add(this.label7);
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Size = new System.Drawing.Size(505, 246);
+            this.tabPage4.Size = new System.Drawing.Size(505, 317);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Testing";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -528,9 +574,9 @@
             this.btnTimeAxis.Name = "btnTimeAxis";
             this.btnTimeAxis.Size = new System.Drawing.Size(107, 23);
             this.btnTimeAxis.TabIndex = 18;
-            this.btnTimeAxis.Text = "Time Axis";
+            this.btnTimeAxis.Text = "DateTime Axis";
             this.btnTimeAxis.UseVisualStyleBackColor = true;
-            this.btnTimeAxis.Click += new System.EventHandler(this.btnTimeAxis_Click);
+            this.btnTimeAxis.Click += new System.EventHandler(this.btnDateTimeAxis_Click);
             // 
             // btnTickTester
             // 
@@ -569,7 +615,7 @@
             this.tabPage5.Location = new System.Drawing.Point(4, 22);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(505, 246);
+            this.tabPage5.Size = new System.Drawing.Size(505, 317);
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "About";
             this.tabPage5.UseVisualStyleBackColor = true;
@@ -614,22 +660,12 @@
             this.label3.Text = "ScottPlot";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // btnToggleVisibility
-            // 
-            this.btnToggleVisibility.Location = new System.Drawing.Point(6, 135);
-            this.btnToggleVisibility.Name = "btnToggleVisibility";
-            this.btnToggleVisibility.Size = new System.Drawing.Size(106, 23);
-            this.btnToggleVisibility.TabIndex = 19;
-            this.btnToggleVisibility.Text = "Toggle Visibility";
-            this.btnToggleVisibility.UseVisualStyleBackColor = true;
-            this.btnToggleVisibility.Click += new System.EventHandler(this.btnToggleVisibility_Click);
-            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(537, 296);
+            this.ClientSize = new System.Drawing.Size(537, 367);
             this.Controls.Add(this.tabControl1);
             this.Name = "FormMain";
             this.Text = "ScottPlot Demos";
@@ -705,6 +741,9 @@
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.Button btnOverride;
         private System.Windows.Forms.Button btnToggleVisibility;
+        private System.Windows.Forms.Button SignalDistribution;
+        private System.Windows.Forms.Button btnRegression;
+        private System.Windows.Forms.Button btnIncoming;
     }
 }
 

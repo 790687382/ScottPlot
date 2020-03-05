@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 
 // TODO: move plottables to their own module
 // TODO: move mouse/axes interaction functions into the mouse module somehow
@@ -47,26 +48,46 @@ namespace ScottPlot
         public readonly Config.Layout layout = new Config.Layout();
         public Config.Ticks ticks = new Config.Ticks();
         public Config.Legend legend = new Config.Legend();
+        public System.Globalization.CultureInfo culture = System.Globalization.CultureInfo.DefaultThreadCurrentCulture;
 
         // mouse interaction
         public Rectangle? mouseMiddleRect = null;
 
         // scales calculations must occur at this level because the axes are unaware of pixel dimensions
-        public double xAxisScale { get { return bmpData.Width / axes.x.span; } } // pixels per unit
-        public double yAxisScale { get { return bmpData.Height / axes.y.span; } } // pixels per unit
+        public double xAxisScale { get { return dataSize.Width / axes.x.span; } } // pixels per unit
+        public double yAxisScale { get { return dataSize.Height / axes.y.span; } } // pixels per unit
         public double xAxisUnitsPerPixel { get { return 1.0 / xAxisScale; } }
         public double yAxisUnitsPerPixel { get { return 1.0 / yAxisScale; } }
 
         // this has to be here because color module is unaware of plottables list
         public Color GetNextColor() { return colors.GetColor(plottables.Count); }
 
-        public void Resize(int width, int height)
+        public void Resize(int width, int height, bool useMeasuredStrings = false)
         {
+            if (useMeasuredStrings && gfxData != null)
+            {
+                // this section was added before display scaling issues (pixel-referenced font sizes) were figured out.
+                // it is probably not needed...
+
+                string sampleString = "IPjg8.8";
+                layout.yLabelWidth = (int)gfxData.MeasureString(sampleString, yLabel.font).Height;
+                layout.y2LabelWidth = (int)gfxData.MeasureString(sampleString, yLabel.font).Height; // currently y2 isn't supported
+                layout.titleHeight = (int)gfxData.MeasureString(sampleString, title.font).Height;
+                layout.xLabelHeight = (int)gfxData.MeasureString(sampleString, xLabel.font).Height;
+
+                var tickSize = gfxData.MeasureString("0.001", ticks.font);
+                layout.yScaleWidth = (int)tickSize.Width;
+                layout.y2ScaleWidth = (int)tickSize.Height; // currently y2 isn't supported
+                layout.xScaleHeight = (int)tickSize.Height;
+            }
+
             layout.Update(width, height);
         }
 
         public void TightenLayout(int padLeft = 15, int padRight = 15, int padBottom = 15, int padTop = 15)
         {
+            Resize(figureSize.Width, figureSize.Height);
+
             // update the layout with sizes based on configuration in settings
 
             layout.titleHeight = (int)title.size.Height + 3;
@@ -109,7 +130,7 @@ namespace ScottPlot
             layout.yLabelWidth = Math.Max(layout.yLabelWidth, padLeft);
             layout.y2LabelWidth = Math.Max(layout.y2LabelWidth, padRight);
             layout.xLabelHeight = Math.Max(layout.xLabelHeight, padBottom);
-            layout.titleHeight = Math.Max(layout.xLabelHeight, padTop);
+            layout.titleHeight = Math.Max(layout.titleHeight, padTop);
 
             layout.Update(figureSize.Width, figureSize.Height);
             layout.tighteningOccurred = true;
@@ -132,86 +153,95 @@ namespace ScottPlot
             axes.Zoom(Math.Pow(10, dXFrac), Math.Pow(10, dYFrac));
         }
 
-        public void AxisAuto(double horizontalMargin = .1, double verticalMargin = .1, bool xExpandOnly = false, bool yExpandOnly = false)
+        public void AxisAuto(
+            double horizontalMargin = .1, double verticalMargin = .1,
+            bool xExpandOnly = false, bool yExpandOnly = false,
+            bool autoX = true, bool autoY = true
+            )
         {
-            // separately adjust on plottables vs. axis lines
-            List<Plottable> plottables2d = new List<Plottable>();
-            List<PlottableAxLine> axisLines = new List<PlottableAxLine>();
-            foreach (Plottable plottable in plottables)
+            var oldLimits = new Config.AxisLimits2D(axes.ToArray());
+            var newLimits = new Config.AxisLimits2D();
+
+            foreach (var plottable in plottables)
             {
-                if (plottable is PlottableAxLine axLine)
-                    axisLines.Add(axLine);
-                else
-                    plottables2d.Add(plottable);
+                Config.AxisLimits2D plottableLimits = plottable.GetLimits();
+                if (autoX && !yExpandOnly)
+                    newLimits.ExpandX(plottableLimits);
+                if (autoY && !xExpandOnly)
+                    newLimits.ExpandY(plottableLimits);
             }
 
-            // expand on non-axis lines first
-            if (plottables2d.Count == 0)
+            newLimits.MakeRational();
+
+            if (xExpandOnly)
             {
-                axes.Set(-10, 10, -10, 10);
-            }
-            else
-            {
-                axes.Set(plottables[0].GetLimits());
-                foreach (Plottable plottable in plottables)
-                {
-                    if (!(plottable is PlottableAxLine axLine))
-                        axes.Expand(plottable.GetLimits());
-                }
+                oldLimits.ExpandX(newLimits);
+                axes.Set(oldLimits.x1, oldLimits.x2, null, null);
+                axes.Zoom(1 - horizontalMargin, 1);
             }
 
-            // special case for scatter plots with a single point
-            if (axes.x.span == 0)
+            if (yExpandOnly)
             {
-                axes.x.min -= 1.5;
-                axes.x.max += 1.5;
-            }
-            if (axes.y.span == 0)
-            {
-                axes.y.min -= 1.5;
-                axes.y.max += 1.5;
+                oldLimits.ExpandY(newLimits);
+                axes.Set(null, null, oldLimits.y1, oldLimits.y2);
+                axes.Zoom(1, 1 - verticalMargin);
             }
 
-            // expand on axis lines last
-            foreach (Plottable plottable in plottables)
+            if ((!xExpandOnly) && (!yExpandOnly))
             {
-                if (plottable is PlottableAxLine axLine)
-                {
-                    var axl = (PlottableAxLine)plottable;
-                    double[] limits = plottable.GetLimits();
-                    if (axl.vertical)
-                    {
-                        limits[2] = axes.y.min;
-                        limits[3] = axes.y.max;
-                    }
-                    else
-                    {
-                        limits[0] = axes.x.min;
-                        limits[1] = axes.x.max;
-                    }
-                    axes.Expand(limits);
-                }
+                axes.Set(newLimits);
+                axes.Zoom(1 - horizontalMargin, 1 - verticalMargin);
             }
-
-            axes.Zoom(1 - horizontalMargin, 1 - verticalMargin);
         }
 
+        /// <summary>
+        /// Returns the X pixel corresponding to an X axis coordinate
+        /// </summary>
+        public double GetPixelX(double locationX)
+        {
+            return (locationX - axes.x.min) * xAxisScale;
+        }
+
+        /// <summary>
+        /// Returns the Y pixel corresponding to a Y axis coordinate
+        /// </summary>
+        public double GetPixelY(double locationY)
+        {
+            return dataSize.Height - (float)((locationY - axes.y.min) * yAxisScale);
+        }
+
+        /// <summary>
+        /// Returns the pixel corresponding to axis coordinates
+        /// </summary>
         public PointF GetPixel(double locationX, double locationY)
         {
-            // Return the pixel location on the data bitmap corresponding to an X/Y location.
-            // This is useful when drawing graphics on the data bitmap.
-            float xPx = (float)((locationX - axes.x.min) * xAxisScale);
-            float yPx = dataSize.Height - (float)((locationY - axes.y.min) * yAxisScale);
-            return new PointF(xPx, yPx);
+            return new PointF((float)GetPixelX(locationX), (float)GetPixelY(locationY));
         }
 
-        public PointF GetLocation(int pixelX, int pixelY)
+        /// <summary>
+        /// Returns the X axis coordinate corresponding to a X pixel on the plot
+        /// </summary>
+        public double GetLocationX(double pixelX)
+        {
+            return (pixelX - dataOrigin.X) / xAxisScale + axes.x.min;
+        }
+
+        /// <summary>
+        /// Returns the Y axis coordinate corresponding to a Y pixel on the plot
+        /// </summary>
+        public double GetLocationY(double pixelY)
+        {
+            return axes.y.max - (pixelY - dataOrigin.Y) / yAxisScale;
+        }
+
+        /// <summary>
+        /// Returns axis coordinates corresponding to a pixel on the plot
+        /// </summary>
+        public PointF GetLocation(double pixelX, double pixelY)
         {
             // Return the X/Y location corresponding to a pixel position on the figure bitmap.
             // This is useful for converting a mouse position to an X/Y coordinate.
-            double locationX = (pixelX - dataOrigin.X) / xAxisScale + axes.x.min;
-            double locationY = axes.y.max - (pixelY - dataOrigin.Y) / yAxisScale;
-            return new PointF((float)locationX, (float)locationY);
+            return new PointF((float)GetLocationX(pixelX), (float)GetLocationY(pixelY));
         }
 
         public int GetTotalPointCount()
@@ -222,12 +252,13 @@ namespace ScottPlot
             return totalPointCount;
         }
 
-        public void Clear(bool axLines = true, bool scatters = true, bool signals = true, bool text = true, bool bar = true, bool finance = true)
+        public void Clear(bool axLines = true, bool scatters = true, bool signals = true, bool text = true, bool bar = true, bool finance = true, bool axSpans = true)
         {
+            // TODO: This is a switch code smell. Use inversion of control here.
             List<int> indicesToDelete = new List<int>();
             for (int i = 0; i < plottables.Count; i++)
             {
-                if (plottables[i] is PlottableAxLine && axLines)
+                if ((plottables[i] is PlottableVLine || plottables[i] is PlottableHLine) && axLines)
                     indicesToDelete.Add(i);
                 else if (plottables[i] is PlottableScatter && scatters)
                     indicesToDelete.Add(i);
@@ -241,6 +272,8 @@ namespace ScottPlot
                     indicesToDelete.Add(i);
                 else if (plottables[i] is PlottableOHLC && finance)
                     indicesToDelete.Add(i);
+                else if ((plottables[i] is PlottableVSpan || plottables[i] is PlottableHSpan) && axSpans)
+                    indicesToDelete.Add(i);
             }
             indicesToDelete.Reverse();
 
@@ -248,36 +281,9 @@ namespace ScottPlot
             {
                 plottables.RemoveAt(indicesToDelete[i]);
             }
-        }
 
-        public PlottableAxLine GetDraggableAxisLineUnderCursor(Point eLocation)
-        {
-            // adjust pixel location to correspond to data frame
-            eLocation.X -= dataOrigin.X;
-            eLocation.Y -= dataOrigin.Y;
-
-            for (int i = 0; i < plottables.Count; i++)
-            {
-                if (plottables[i] is PlottableAxLine axLine)
-                {
-                    if (axLine.draggable == false)
-                        continue;
-
-                    if (axLine.vertical == true)
-                    {
-                        PointF linePosPx = GetPixel(axLine.position, 0);
-                        if (Math.Abs(linePosPx.X - eLocation.X) < 5)
-                            return axLine;
-                    }
-                    else
-                    {
-                        PointF linePosPx = GetPixel(0, axLine.position);
-                        if (Math.Abs(linePosPx.Y - eLocation.Y) < 5)
-                            return axLine;
-                    }
-                }
-            }
-            return null;
+            axes.x.hasBeenSet = false;
+            axes.y.hasBeenSet = false;
         }
     }
 }

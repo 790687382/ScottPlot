@@ -34,19 +34,19 @@ namespace ScottPlot.UserControls
             tbY2.Text = Math.Round(plt.Axis()[3], 4).ToString();
             tbY1.Text = Math.Round(plt.Axis()[2], 4).ToString();
             cbYminor.Checked = plt.GetSettings().ticks.displayYminor;
-            cbYdateTime.Checked = plt.GetSettings().ticks.timeFormatY;
+            cbYdateTime.Checked = plt.GetSettings().ticks.y.dateFormat;
 
             // horizontal axis
             tbXlabel.Text = plt.GetSettings().xLabel.text;
             tbX2.Text = Math.Round(plt.Axis()[1], 4).ToString();
             tbX1.Text = Math.Round(plt.Axis()[0], 4).ToString();
             cbXminor.Checked = plt.GetSettings().ticks.displayXminor;
-            cbXdateTime.Checked = plt.GetSettings().ticks.timeFormatX;
+            cbXdateTime.Checked = plt.GetSettings().ticks.x.dateFormat;
 
             // tick display options
             cbTicksOffset.Checked = plt.GetSettings().ticks.useOffsetNotation;
             cbTicksMult.Checked = plt.GetSettings().ticks.useMultiplierNotation;
-            cbGrid.Checked = plt.GetSettings().grid.visible;
+            cbGrid.Checked = plt.GetSettings().grid.enableHorizontal;
 
             // legend
             cbLegend.Checked = (plt.GetSettings().legend.location == legendLocation.none) ? false : true;
@@ -77,10 +77,17 @@ namespace ScottPlot.UserControls
             PopualteGuiFromPlot();
         }
 
+        private void btnCopyCSV_Click(object sender, EventArgs e)
+        {
+            int plotObjectIndex = lbPlotObjects.SelectedIndex;
+            IExportable plottable = (IExportable)plt.GetPlottables()[plotObjectIndex];
+            Clipboard.SetText(plottable.GetCSV());
+        }
+
         private void BtnExportCSV_Click(object sender, EventArgs e)
         {
             int plotObjectIndex = lbPlotObjects.SelectedIndex;
-            var plottable = plt.GetPlottables()[plotObjectIndex];
+            IExportable plottable = (IExportable)plt.GetPlottables()[plotObjectIndex];
 
             SaveFileDialog savefile = new SaveFileDialog();
             savefile.Title = $"Export CSV data for {plottable}";
@@ -97,13 +104,15 @@ namespace ScottPlot.UserControls
                 int plotObjectIndex = lbPlotObjects.SelectedIndex;
                 var plottable = plt.GetPlottables()[plotObjectIndex];
 
-                btnExportCSV.Enabled = true;
+                btnExportCSV.Enabled = plottable is IExportable;
+                btnCopyCSV.Enabled = plottable is IExportable;
                 tbLabel.Enabled = true;
                 tbLabel.Text = plottable.label;
             }
             else
             {
                 btnExportCSV.Enabled = false;
+                btnCopyCSV.Enabled = false;
                 tbLabel.Enabled = false;
             }
         }
@@ -163,6 +172,5 @@ namespace ScottPlot.UserControls
         {
             plt.TightenLayout();
         }
-
     }
 }
